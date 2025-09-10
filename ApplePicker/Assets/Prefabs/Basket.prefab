@@ -141,7 +141,7 @@ MonoBehaviour:
   mouseSensitivity: 1
   startingLives: 3
   pointsPerApple: 10
-  scoreText: {fileID: 0}
-  livesText: {fileID: 0}
-  gameOverPanel: {fileID: 0}
-  finalScoreText: {fileID: 0}
+  pointsPerGoldenApple: 100
+  gameOverPanel: {fileID: 1953334285922656410, guid: bcd67c788616d74408be3d7accd9bbec, type: 3}
+  restartButton: {fileID: 0}
+  exitButton: {fileID: 0}

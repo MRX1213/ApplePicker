@@ -78,8 +78,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   boundaryOffset: 20
-  applePrefab: {fileID: 0}
-  basketPrefab: {fileID: 0}
+  applePrefab: {fileID: 2211367896735419617, guid: e6230f8f4518b9c4895f6e74161a4a92, type: 3}
+  goldenApplePrefab: {fileID: 1526697849426669578, guid: faa318b7707fec54b8dcbfe53bce2be4, type: 3}
+  basketPrefab: {fileID: 7806772145852798901, guid: c361cd06e12a7e846a06c59ad5102510, type: 3}
 --- !u!1 &6279689005995051321
 GameObject:
   m_ObjectHideFlags: 0

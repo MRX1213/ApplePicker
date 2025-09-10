@@ -15,8 +15,19 @@ public class Apple : MonoBehaviour
         // Find the basket in the scene
         basket = FindObjectOfType<Basket>();
         
-        // Automatically set the Apple tag
-        gameObject.tag = "Apple";
+        // Check if this is a golden apple (by checking if it has a golden material or name)
+        bool isGoldenApple = gameObject.name.ToLower().Contains("golden") || 
+                           (GetComponent<Renderer>() != null && GetComponent<Renderer>().material.name.ToLower().Contains("gold"));
+        
+        // Set appropriate tag
+        if (isGoldenApple)
+        {
+            gameObject.tag = "GoldenApple";
+        }
+        else
+        {
+            gameObject.tag = "Apple";
+        }
         
         // Debug: Check if tag was set correctly
         Debug.Log("Apple spawned with tag: " + gameObject.tag);

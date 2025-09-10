@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Apple
   - Basket
+  - GoldenApple
+  - Button
+  - ButtonText
   layers:
   - Default
   - TransparentFX

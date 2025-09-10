@@ -11,14 +11,16 @@ public class Basket : MonoBehaviour
     [Header("Game Settings")]
     public int startingLives = 3; // Starting number of baskets/lives
     public int pointsPerApple = 10; // Points earned per apple caught
+    public int pointsPerGoldenApple = 100; // Points earned per golden apple caught (10x regular)
     
     [Header("UI References")]
-    public Text scoreText; // UI text to display score
-    public Text livesText; // UI text to display lives
     public GameObject gameOverPanel; // Panel to show when game ends
-    public Text finalScoreText; // Text to show final score
     
-    private int currentScore = 0;
+    [Header("Button References")]
+    public Button restartButton; // Button to restart the game
+    public Button exitButton; // Button to exit the game
+    
+    private static int currentScore = 0;
     private int currentLives;
     private bool gameActive = true;
     
@@ -26,11 +28,13 @@ public class Basket : MonoBehaviour
     void Start()
     {
         currentLives = startingLives;
-        UpdateUI();
         
         // Hide game over panel initially
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
+        
+        // Set up button listeners
+        SetupButtons();
         
         // Debug: Check basket setup
         CheckBasketSetup();
@@ -64,8 +68,8 @@ public class Basket : MonoBehaviour
         
         if (!gameActive) return;
         
-        // Check if we caught an apple
-        if (other.CompareTag("Apple"))
+        // Check if we caught an apple or golden apple
+        if (other.CompareTag("Apple") || other.CompareTag("GoldenApple"))
         {
             //Debug.Log("Apple caught! Tag matches: " + other.tag);
             CatchApple(other.gameObject);
@@ -80,14 +84,19 @@ public class Basket : MonoBehaviour
     {
         //Debug.Log("CatchApple called! Destroying apple: " + apple.name);
         
-        // Add points
-        currentScore += pointsPerApple;
+        // Check if it's a golden apple and add appropriate points
+        if (apple.CompareTag("GoldenApple"))
+        {
+            currentScore += pointsPerGoldenApple;
+            Debug.Log("Golden apple caught! +" + pointsPerGoldenApple + " points!");
+        }
+        else
+        {
+            currentScore += pointsPerApple;
+        }
         
         // Destroy the apple
         Destroy(apple);
-        
-        // Update UI
-        UpdateUI();
         
         // Optional: Play sound effect here
         // AudioSource.PlayClipAtPoint(catchSound, transform.position);
@@ -100,9 +109,6 @@ public class Basket : MonoBehaviour
         // Lose a life
         currentLives--;
         
-        // Update UI
-        UpdateUI();
-        
         // Check if game is over
         if (currentLives <= 0)
         {
@@ -113,17 +119,6 @@ public class Basket : MonoBehaviour
         // AudioSource.PlayClipAtPoint(missSound, transform.position);
     }
     
-    void UpdateUI()
-    {
-        // Update score text
-        if (scoreText != null)
-            scoreText.text = "Score: " + currentScore.ToString();
-        
-        // Update lives text
-        if (livesText != null)
-            livesText.text = "Lives: " + currentLives.ToString();
-    }
-    
     void GameOver()
     {
         gameActive = false;
@@ -132,12 +127,6 @@ public class Basket : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-        }
-        
-        // Show final score
-        if (finalScoreText != null)
-        {
-            finalScoreText.text = "Game Over! Final Score: " + currentScore.ToString();
         }
         
         // Optional: Pause the game or show restart button
@@ -159,14 +148,17 @@ public class Basket : MonoBehaviour
         // Resume time
         Time.timeScale = 1f;
         
-        // Update UI
-        UpdateUI();
-        
-        // Optional: Destroy all remaining apples
+        // Optional: Destroy all remaining apples and golden apples
         GameObject[] apples = GameObject.FindGameObjectsWithTag("Apple");
         foreach (GameObject apple in apples)
         {
             Destroy(apple);
+        }
+        
+        GameObject[] goldenApples = GameObject.FindGameObjectsWithTag("GoldenApple");
+        foreach (GameObject goldenApple in goldenApples)
+        {
+            Destroy(goldenApple);
         }
     }
     
@@ -194,5 +186,52 @@ public class Basket : MonoBehaviour
         // Check basket position
         //Debug.Log("Basket position: " + transform.position);
         //Debug.Log("Basket scale: " + transform.localScale);
+    }
+    
+    void SetupButtons()
+    {
+        // Set up restart button
+        if (restartButton != null)
+        {
+            restartButton.onClick.AddListener(RestartGame);
+        }
+        
+        // Set up exit button
+        if (exitButton != null)
+        {
+            exitButton.onClick.AddListener(ExitGame);
+        }
+    }
+    
+    // Method to exit the game
+    public void ExitGame()
+    {
+        Debug.Log("Exiting game...");
+        
+        #if UNITY_EDITOR
+            // If running in Unity Editor, stop play mode
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            // If running as a built game, quit the application
+            Application.Quit();
+        #endif
+    }
+    
+    // Public method to get the current score (for other scripts to access)
+    public int GetCurrentScore()
+    {
+        return currentScore;
+    }
+    
+    // Public method to get the current lives (for other scripts to access)
+    public int GetCurrentLives()
+    {
+        return currentLives;
+    }
+    
+    // Public method to check if the game is currently active
+    public bool IsGameActive()
+    {
+        return gameActive;
     }
 }
